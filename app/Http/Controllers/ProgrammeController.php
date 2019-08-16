@@ -15,6 +15,7 @@ use App\Skillset;
 use App\Pinnotification;
 use App\ProgrammeImage;
 use App\VolunteerEvent;
+use App\InterestedProgramme;
 use App\VolunteerNotification;
 use App\VolunteerOfficework;
 use Illuminate\Support\Facades\Input;
@@ -35,6 +36,7 @@ class ProgrammeController extends Controller
 		]);
 	}
 	
+
 	public function create()
 	{
 		$Programme = new Programme();
@@ -45,16 +47,21 @@ class ProgrammeController extends Controller
 
 	public function store(Request $request)
 	{
+		//===========================_//
+		//       Validate Data        //
+		//===========================///
 		$validatedData = $request->validate([
 			'name' => 'required|unique:programmes,name',
 			'code' => 'required|unique:programmes,code', 
-			'cover_image[]' => 'nullable',
+			'supporting_partner_image.*' => 'nullable|image|mimes:jpeg,jpg,png,gif',
 		  ]);
 
-		// Save Picture Into Folder
-		if($request->hasFile('cover_image'))
+		//===========================_//
+		//  Save Image into Folder    //
+		//===========================///
+		if($request->hasFile('supporting_partner_image'))
 		{
-				$fileNameWithExt = $request->file('cover_image');
+				$fileNameWithExt = $request->file('supporting_partner_image');
 				foreach($fileNameWithExt as $fileNameWithExt)
 				{
 					$fileNaming = $fileNameWithExt->getClientOriginalName();
@@ -65,17 +72,22 @@ class ProgrammeController extends Controller
 				}
 
 		}
-
-		// Save Programme Into Database
+		//===========================_//
+		//        Save Programme      //
+		//===========================///
 			$Programme = new Programme();
 			$Programme->fill($request->all());
 			$Programme->save();
 
-		//Retrieve Programme Id
+		//===========================_//
+		//  Retrieve Programme Id    //
+		//===========================///
 			$Programme_pid = Programme::where('name',$Programme->name)->first();
 
-		//Loop And Save Picture Name Into Database
-			$fileName_array = $request->file('cover_image');
+		//===========================_//
+		//  Save Image into database  //
+		//===========================///
+			$fileName_array = $request->file('supporting_partner_image');
 			if($fileName_array != null){
 				foreach($fileName_array as $Image_array)
 				{
@@ -91,7 +103,21 @@ class ProgrammeController extends Controller
 				}
 			}
 
-			return redirect()->route('programme.index');
+			//===========================_//
+			//      Send Notification    //
+			//===========================///
+			$notification = new Notification;
+			$notification->title = 'New Available <'.$request->name.'> Programme';
+			$notification->description = 'A new programme named: <'.$request->name.'> is available now!. Everyone is welcome to take part in this programme.';
+			$notification->for_volunteer = 1;
+			$notification->for_admin = 0;
+			$notification->broadcast = 1;
+			$notification->is_auto = 1;
+			$notification->created_by = $request->created_by;
+			$notification->category = 2;
+			$notification->save();
+
+		return redirect()->route('programme.index')->with('alert', 'Programme Created Successfully!'); 
 	}
 
 	//Must present if want to show a web page
@@ -100,6 +126,7 @@ class ProgrammeController extends Controller
 				$Programme = Programme::find($request->pid);
 				$ProgrammeImage = ProgrammeImage::where('pid',$request->pid)->get();
 				if(!$Programme) throw new ModelNotFoundException;
+				if(!$ProgrammeImage) throw new ModelNotFoundException;
 
 				return view('programme.show',[
 					'programme' => $Programme,
@@ -113,6 +140,7 @@ class ProgrammeController extends Controller
 			$Programme = Programme::find($id);
 			$ProgrammeImage = ProgrammeImage::where('pid',$id)->get();
 			if(!$Programme) throw new ModelNotFoundException;
+			if(!$ProgrammeImage) throw new ModelNotFoundException;
 
 			return view('programme.edit',[
 				'programme' => $Programme,
@@ -123,19 +151,26 @@ class ProgrammeController extends Controller
 	//Must present if edit is present
     public function update(Request $request, $id)
     {
-
+		//===========================_//
+		//       Validate Data       //
+		//===========================///
 		$this->validate($request,array(
-			// 'name' => "required|unique:programmes,name,$id,name",
+			'name' => "required|unique:programmes,name,$id,pid",
 			'code' => "required|unique:programmes,code,$id,pid",
-			'cover_image[]' => 'nullable',
+			'supporting_partner_image.*' => 'nullable|image|mimes:jpeg,jpg,png,gif',
 		));
 
-			//Retrieve selected delete image
+			//===========================_//
+			//  Retrieve delete file name  //
+			//===========================///
 			$selectValue =  Input::get('delete_filename');
 			
 			$ProgrammeImage = ProgrammeImage::where('pid',$id)->get();
 			
-			//Delete Selected Image In Database and Storage
+			//===========================_//
+			//  Delete images in storage  //
+			//  Delete images in database //
+			//===========================///
 			if($selectValue != null){
 				foreach($ProgrammeImage as $Image)
 				{
@@ -151,10 +186,12 @@ class ProgrammeController extends Controller
 				}
 		}
 
-			//Save Image Into Storage
-			if($request->hasFile('cover_image'))
+			//===========================_//
+			//Save new image into storage //
+			//===========================///
+			if($request->hasFile('supporting_partner_image'))
 		{
-				$fileNameWithExt = $request->file('cover_image');
+				$fileNameWithExt = $request->file('supporting_partner_image');
 				foreach($fileNameWithExt as $fileNameWithExt)
 				{
 					$fileNaming = $fileNameWithExt->getClientOriginalName();
@@ -166,8 +203,10 @@ class ProgrammeController extends Controller
 
 		}
 
-		//Save Images Into Database
-		$fileName_array = $request->file('cover_image');
+		//===========================_//
+		//Save new image into database//
+		//===========================///
+		$fileName_array = $request->file('supporting_partner_image');
 		if($fileName_array != null){
 				foreach($fileName_array as $Image_array)
 				{
@@ -181,27 +220,89 @@ class ProgrammeController extends Controller
 					$ProgrammeImage->save();
 				}
 			}
-					//Save Latest Programme Info
+					//===========================_//
+					//      Update programme       //
+					//===========================///
 					$Programme = Programme::find($id);
 					if(!$Programme) throw new ModelNotFoundException;
-
 					$Programme->fill($request->all());
 					$Programme->save();
-					return redirect()->route('programme.index');
+
+
+					//===========================_//
+					//      Send Notification       //
+					//===========================///
+					$registered_volunteers = InterestedProgramme::where('pid',$id)->get();
+					if(count($registered_volunteers)>0){
+						$notification = new Notification;
+						$notification->title = 'Updated <'.$request->name.'> Programme';
+						$notification->description = 'The programme named: <'.$request->name.'> is updated. You can check the further details in view profile page.';
+						$notification->for_volunteer = 1;
+						$notification->for_admin = 0;
+						$notification->broadcast = 0;
+						$notification->is_auto = 1;
+						$notification->created_by = $Programme->created_by ;
+						$notification->category = 2;
+						$notification->save();
+
+						foreach($registered_volunteers as $registered_volunteer){
+						$volunteer_notification = new VolunteerNotification;
+						$volunteer_notification->vid = $registered_volunteer->vid;
+						$volunteer_notification->nid = $notification->nid;
+						$volunteer_notification->save();
+						}
+					}
+
+					return redirect()->route('programme.index')->with('alert', 'Programme Updated Successfully!'); 
     }
 
 		public function delete($id)
     {
+			//===========================_//
+			//  Delete images in database //
+			// 	Delete images in storage  //
+			//===========================///
 			$ProgrammeImage = ProgrammeImage::where('pid',$id)->get();
 			foreach($ProgrammeImage as $Image)
 			{
-				//$result = Storage::delete("/storage/cover_image/$Image->filename");
 				$result = Storage::disk('public')->delete('cover_image/'.$Image->filename);
 				$Image->delete();
 			} 
+
+			//===========================_//
+			//     Delete programme       //
+			//    Delete Related Events  //
+			//===========================///
 			$Programme = Programme::where('pid', $id)->delete();
+			$Event = Event::where('pid', $id)->delete();
 			if(!$Programme) throw new ModelNotFoundException;
-			return redirect()->route('programme.index');
+			if(!$ProgrammeImage) throw new ModelNotFoundException;
+
+			//===========================_//
+			//      Send Notification       //
+			//===========================///
+			$registered_volunteers = InterestedProgramme::where('pid',$id)->get();
+			if(count($registered_volunteers)>0){
+			$notification = new Notification;
+			$notification->title = 'Deleted <'.$request->name.'> Programme';
+			$notification->description = 'The programme named: <'.$request->name.'> is removed due to some issues. You are welcome to take part in other programmes.';
+			$notification->for_volunteer = 1;
+			$notification->for_admin = 0;
+			$notification->broadcast = 0;
+			$notification->is_auto = 1;
+			$notification->created_by = $Programme->created_by ;
+			$notification->category = 2;
+			$notification->save();
+
+			foreach($registered_volunteers as $registered_volunteer){
+			$volunteer_notification = new VolunteerNotification;
+			$volunteer_notification->vid = $registered_volunteer->vid;
+			$volunteer_notification->nid = $notification->nid;
+			$volunteer_notification->save();
+				}
+			}
+
+			return redirect()->route('programme.index')->with('alert', 'Programme Deleted Successfully!'); 
 	}
 	
 	public function select_tab(Request $request)
