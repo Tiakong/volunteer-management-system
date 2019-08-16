@@ -1,0 +1,129 @@
+
+table#volunteerNameList td:hover {
+  background-color: #e6e6e6;
+  color: #000000;
+}
+
+table#volunteerNameList td
+{
+	border:1px solid #d9d9d9;
+	padding:12px;
+}
+
+table#volunteerNameList
+{
+	width:100%;
+}
+
+div#notifType input[type=radio]
+{
+	position:relative;
+	top:4px;
+	left:5px;
+}
+
+div#notifType label
+{
+	position:relative;
+	left:10px;
+	font-size:16px;
+}
+
+div#notifType > div
+{
+	padding:6px;
+}
+
+div#notifType div.select
+{
+	background:#234876;
+	color:white;
+}
+
+.disable-highlight
+{
+	-moz-user-select: none;
+	-webkit-user-select: none; 
+	-ms-user-select:none;
+	user-select:none;
+	-o-user-select:none;
+}
+
+.notification-title
+{
+	font-weight:bold;
+	font-size:18px;
+    font-family: Arial, Helvetica, sans-serif;
+	color:white;
+}
+.notification-title:hover
+{	
+	cursor: pointer
+}
+.notification-title tr
+{
+	background-color:#1e3b62;
+}
+.notification-title tr:hover
+{
+	background-color:#183150;
+}
+.notification-title tr.Urgent
+{
+	background-color:#cc0000;
+}
+.notification-title tr.Urgent:hover
+{
+	background-color:#b30000;
+}
+.notification-title tr.Announcement
+{
+	background-color:#00802b;
+}
+.notification-title tr.Announcement:hover
+{
+	background-color:#006622;
+}
+.notification-title tr.Reminder
+{
+	background-color:#000099;
+}
+.notification-title tr.Reminder:hover
+{
+	background-color:#00004d;
+}
+
+.notification-description
+{
+	height:auto;
+	display:none;
+}
+
+.notification-description.row-active
+{
+	display:table-row-group;
+}
+
+pre
+{
+	display: inline;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    background-color: #f5f5f5;
+    border: none;
+	line-height:1.8;
+    border-radius: 4px;
+}
+
+.card-require > .card-body {
+    background-image: none;
+    background-color: rgb(176, 201, 232, 0.9);
+    border: none;
+	color:black;
+}
+
+.required
+{
+	color:red;
+	
+}

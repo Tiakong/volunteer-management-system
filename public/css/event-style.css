@@ -1,0 +1,222 @@
+.event-form-container {
+    height:auto;
+}
+
+.button-div{
+    width: 100%;
+    height: 100px;
+    position:relative;
+    overflow-y:visible;
+
+}
+
+.program-button-div{
+    float:left;
+    margin:0px 20px;
+}
+
+.event-button-div{
+    float:left;
+}
+
+@media only screen and (max-width: 1200px) {
+    .event-button-div{
+        float:none;
+    }
+    
+}
+
+.function-button-div{
+    float:right;
+}
+
+.program-button {
+    width:250px;
+    height:60px;
+    margin:10px 10px 0px 0px;
+    font-size: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.dropdown-menu li {
+    font-size: 20px;
+    width:250px;
+    display: block;
+}
+
+.event-bar {
+    width:100%;
+    height: auto;
+    overflow:hidden;
+}
+
+.event-board {
+    width:45%;
+    height:265px;
+    margin:30px 25px;
+    float: left;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    border: 1px solid blue;
+    box-shadow: 0px 0px 15px 0px lightblue;
+    border-radius:15px;
+    overflow: hidden;
+}
+
+@media only screen and (max-width: 1000px) {
+    .event-board {
+        width:100%;
+        height:auto;
+        font-size: 30px;
+    }
+}
+
+
+.event-board table tr td {
+    padding:10px 0px 10px 20px;
+    width:auto;
+}
+
+
+
+.event-detail-board {
+    width:100%;
+    height:700px;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    border: 1px solid #183150;
+    box-shadow: 0px 0px 15px 0px lightblue;
+    overflow: hidden;
+}
+/* Event detail related css */
+
+.event-detail-left-section {
+    height:100%;
+    width:40%;
+    float:left;
+}
+
+.event-detail-topleft-section {
+    height:40%;
+    width:100%;
+    text-align: center;
+    background-color:  #183150;
+}
+
+.event-detail-topright-section {
+    height:40%;
+    width:100%;
+}
+
+.event-detail-topleft-section p{
+    color:white;
+    font-size: 40px;
+    padding:30px;
+}
+
+.event-detail-btmleft-section {
+    
+    border-right: 1px solid lightgray;
+    height:60%;
+    width:100%;
+}
+
+.event-detail-date,.event-detail-time,.event-detail-venue {
+    border-top: 1px solid lightgray;
+    height:25%;
+    min-height:100px;
+    width:100%;
+}
+
+.event-info-font {
+    font-size:30px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    padding:20px;
+    
+}
+
+/* Event detail right section related css */
+.event-detail-right-section {
+    height:100%;
+    width:60%;
+    float:right;
+    text-align: center; 
+}
+
+.event-detail-right-section h1{
+    font-size: 40px;
+    padding:30px;
+}
+
+.event-detail-description {
+    width:80%;
+    height: 80%;
+    margin:auto;
+    padding:30px;
+    text-align: justify;
+    overflow: auto;
+}
+
+.event-detail-button {
+    margin:20px 5px;
+    width:130px;
+    height:50px;
+    font-size: 15px;
+}
+
+.event-detail-icon {
+    font-size:71px; 
+    padding:10px; 
+    float:left;
+}
+
+#creator {
+    font-size:40px; 
+}
+@media only screen and (max-width: 1200px){
+    .event-detail-board {
+        width:100%;
+        height:auto;
+        font-size: 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        border: 1px solid #183150;
+        box-shadow: 0px 0px 15px 0px lightblue;
+        overflow: hidden;
+    }
+
+    .event-detail-topleft-section {
+        height:auto;
+        width:100%;
+        overflow: hidden;
+    }
+    
+    .event-detail-left-section {
+        height:100%;
+        width:100%;
+        float:none;
+    }
+
+    .event-detail-right-section {
+        height:100%;
+        width:100%;
+        float:none;
+        text-align: center; 
+    }
+
+    #creator {
+        font-size:30px; 
+        float:none;
+    }
+
+    .event-detail-icon {
+        font-size:50px;
+        float:none; 
+    }
+
+    .event-detail-btmleft-section {
+    
+        text-align: center;
+    }
+    
+}

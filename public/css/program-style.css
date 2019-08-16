@@ -1,0 +1,127 @@
+
+/* Overview program css */
+.program-form-container {
+  margin-top:50px;
+  width:100%;
+  position:relative;
+  margin-bottom: 50px;
+}
+
+.program-board {
+    width:90%;
+    height:auto;
+    margin:30px 50px;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius:15px;
+    border: 1px solid blue;
+    box-shadow: 0px 0px 15px 0px lightblue;
+    overflow:hidden;
+}
+
+.program-board table {
+    padding:10px 0px 10px 20px;
+    margin:20px;
+    text-align: left;
+    float: left;
+}
+
+
+
+.program-detail-board {
+    width:100%;
+    height:500px;
+    margin:30px 25px;
+    background-image: linear-gradient(to bottom,rgb(253, 242, 242),silver);
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius:15px;
+    box-shadow: 0px 20px 10px 0px;
+    overflow: hidden;
+}
+
+.program-detail-left-section {
+    height:100%;
+    width:40%;
+    float:left;
+}
+
+.program-detail-topleft-section {
+    height:40%;
+    width:100%;
+    text-align: center;
+    background-image: linear-gradient(to bottom,rgb(253, 242, 242),silver);
+}
+
+.program-detail-topleft-section h1{
+    font-size: 40px;
+    padding:30px;
+}
+
+.program-detail-btmleft-section {
+    height:60%;
+    width:100%;
+    background-image: linear-gradient(to bottom,rgb(253, 242, 242),silver);
+}
+
+.program-detail-date,.program-detail-time,.program-detail-venue {
+    height:33.3%;
+    width:100%;
+}
+
+.program-info-font {
+    font-size:30px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    padding:20px;
+
+}
+
+
+.program-detail-right-section {
+    height:100%;
+    width:60%;
+    float:right;
+    text-align: center;
+    background-image: linear-gradient(to bottom,rgb(253, 242, 242),silver);
+}
+
+.program-detail-right-section h1{
+    font-size: 40px;
+    padding:30px;
+}
+
+.program-detail-description {
+    width:80%;
+    height: 300px;
+    margin:auto;
+    text-align: justify;
+}
+
+.program-detail-button {
+    width:130px;
+    height:50px;
+    font-size: 15px;
+}
+
+/* Program Table View Details */
+.program-table{
+  margin-top: 5%;
+  margin-bottom: 10%;
+  position:relative;
+
+}
+
+.program-table td{
+  font-size: 20px;
+  text-align: justify;
+  /* border: 5px solid black; */
+}
+
+.program-table td:first-child {
+    text-align: left;
+}​
+
+.program-table .space{
+  padding-left: 20%;
+}

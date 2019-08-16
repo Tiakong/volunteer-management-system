@@ -1,0 +1,21 @@
+.register_container{
+  width:100%;
+	margin:auto;
+	max-width:2000px;
+	min-height:670px;
+	position:relative;
+}
+#tab-content-display {
+	display: block;
+}
+
+#tab-content2-display,#tab-content3-display {
+	display: none;
+}
+
+.first-info,.second-info,.third-info {
+	width:60%;
+	display:block;
+	overflow: hidden;
+	margin:auto;
+}

@@ -1,0 +1,28 @@
+.search_container{
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5%;
+    width: 800px;
+    height: auto;
+    position: relative;
+    margin-bottom: 100px;
+}
+
+input[type="checkbox"][readonly] {
+  pointer-events: none;
+}
+
+.checkbox-block-selected, .checkbox-block-selected:hover
+{
+	background:#244775;
+	color:white;
+}
+
+.tab-wrapper a:hover
+{
+	cursor: pointer
+}
+
+.tabcontent {
+  display: none;
+}

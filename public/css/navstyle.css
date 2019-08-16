@@ -1,0 +1,48 @@
+
+ 
+
+#navigation-bar li:hover a::before {
+  right: 0;
+  left: 0;
+}
+
+#navigation-bar a {
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  position: relative;
+  transition: all 0.3s ease;
+  padding-bottom:10px;
+}
+
+#navigation-bar a::before {
+  content: "";
+  transition: all 0.4s ease-in-out;
+  position: absolute;
+  right: 50%;
+  left: 50%;
+  bottom: 20%;
+  height: 4px;
+  background-color: rgb(42, 42, 218);
+}
+
+#navigation-bar a:hover::before {
+  right: 0;
+  left: 0;
+}
+ 
+li {
+	list-style: none;
+}
+
+#pop-up-navigation-bar li a {
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  padding:20px;
+}
+
+#pop-up-navigation-bar li a:hover {
+background-color: rgba(42,42,218,0.7);
+}
+
