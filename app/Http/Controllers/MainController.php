@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use App\Common;
 use Illuminate\Http\Request;
 use App\AdminAccount;
@@ -23,8 +25,13 @@ class MainController extends Controller
 {	
 
     public function award(Request $request){
-        $volunteer_serve_hour = \DB::table('volunteers')->where('vid',\Session::get('user_id'))->value('acc_serve_hour');
-        $volunteer_rank =\DB::table('award_histories')->where('vid',\Session::get('user_id'))->value('description');
+        $volunteer_serve_hour = \DB::table('volunteers')
+		->where('vid',\Session::get('user_id'))
+		->value('acc_serve_hour');
+		
+        $volunteer_rank =\DB::table('award_histories')
+		->where('vid',\Session::get('user_id'))
+		->value('description');
 
         return view('award',[
             'volunteer_serve_hour' => $volunteer_serve_hour,
@@ -34,8 +41,6 @@ class MainController extends Controller
    
 	public function index(Request $request)
 	{
-
-        $authority = $request->session()->get('authority');
         /******************Admin Data*****************/
         $programmes = Programme::all();
         $events = \DB::table('events')->where('date','>=',date('Y-m-d'))->get();
@@ -45,93 +50,59 @@ class MainController extends Controller
             $number_of_ongoing_events[$i] = count(\DB::table('events')->where('pid',$programme->pid)->where('date','>=',date('Y-m-d'))->get());
         }
 
-        $total_volunteers = Volunteer::all();
-        $active_volunteer = 0;
-        foreach($total_volunteers as $volunteer){
-            if(((strtotime(date('Y-m-d'))-strtotime($volunteer->last_login))/86400)<100){
-                $active_volunteer += 1;
-            }
-        }
+		//inactive volunteers
+        $inactive_volunteer_count = count(Volunteer::where('last_active_date', '<', Carbon::now()->subDays(Common::$DAY_TO_CONSIDER_INACTIVE))
+		->orderBy('last_active_date', 'asc')
+		->get());
+		
+		//Number of volunteers in the database
+		$volunteer_count = count(Volunteer::all());
+		
+		//Number of new volunteer registered this month
+		$new_volunteer_this_month = count(Volunteer::whereMonth('created_at', '=', Carbon::today()->month)
+		->get());
 
-        $lifetime_ranking = Volunteer::orderBy('acc_serve_hour','desc')->paginate(5);
-        
-        //find top 5 volunteer in volunteer_events table
-        foreach($total_volunteers as $i => $volunteer){
-            $number = \DB::table('volunteer_events')
-            ->join('events','volunteer_events.eid','=','events.eid')
-            ->where('volunteer_events.vid',$volunteer->vid)
-            ->where('volunteer_events.status','present')
-            ->where('events.date','>',date('Y-m-d',mktime(0,0,0,1,1,date("Y"))))
-            ->where('events.date','<',date('Y-m-d',mktime(0,0,0,1,1,date("Y")+1)))
-            ->sum('volunteer_events.serve_hour');
-            $number_of_events_of_the_volunteer[$volunteer->name] = $number;
-            arsort($number_of_events_of_the_volunteer);
-            
-            
-        }
-
-        foreach($number_of_events_of_the_volunteer as $name => $number){
-            $occupation = \DB::table('volunteers')->where('name',$name)->value('occupation');
-            $name_occupation[$name] = $occupation;
-        }
-
+		//volunteers lifetime serve hour 
+		$volunteer_acc_serve_hour = DB::table('volunteers as v')
+		->select('v.*', DB::raw('sum(ve.serve_hour+vo.serve_hour) as total_serve_hour'))
+		->join('volunteer_events as ve', 'v.vid', '=', 've.vid')
+		->join('volunteer_officeworks as vo', 'v.vid', '=', 'vo.vid')
+		->where('ve.status','present')
+		->groupBy('v.vid')
+		->orderBy('total_serve_hour', 'desc');
+		
+		$year = Carbon::now()->year;
+		$eids = Event::where('date', '>=', $year.'-01-01')
+		->where('date', '<=', $year.'-12-31')
+		->pluck('eid');
+		
+		//volunteers annual serve hour 
+		$volunteer_ann_serve_hour = $volunteer_acc_serve_hour->whereIn('ve.eid', $eids)->get();
+		$volunteer_acc_serve_hour = $volunteer_acc_serve_hour->get();
+		
+		//next event
+		$date = Event::whereDate('date', '>', Carbon::now()->format('Y-m-d'))
+		->join('programmes', 'programmes.pid', '=', 'events.pid')
+		->orderBy('date', 'asc')
+		->first()
+		->date;
+		
+		$next_events = Event::whereDate('date', '=', $date)
+		->join('programmes as p', 'p.pid', '=', 'events.pid')
+		->select('p.code', 'events.*')
+		->orderBy('start_time')
+		->get();
+		
         /***********************Volunteer Data*******************/
-            $number_of_reserved_events = \DB::table('volunteer_events')
-            ->join('events','volunteer_events.eid','=','events.eid')
-            ->where('volunteer_events.vid',\Session::get('user_id'))
-            ->where('volunteer_events.status','absent')
-            ->where('events.date','>',date('Y-m-d',mktime(0,0,0,1,1,date("Y"))))
-            ->where('events.date','<',date('Y-m-d',mktime(0,0,0,1,1,date("Y")+1)))
-            ->count();
-
-            $number_of_attended_events = \DB::table('volunteer_events')
-            ->join('events','volunteer_events.eid','=','events.eid')
-            ->where('volunteer_events.vid',\Session::get('user_id'))
-            ->where('volunteer_events.status','present')
-            ->count();
-
-            $number_of_completed_events_annual = \DB::table('volunteer_events')
-            ->join('events','volunteer_events.eid','=','events.eid')
-            ->where('volunteer_events.vid',\Session::get('user_id'))
-            ->where('volunteer_events.status','present')
-            ->where('events.date','>',date('Y-m-d',mktime(0,0,0,1,1,date("Y"))))
-            ->where('events.date','<',date('Y-m-d',mktime(0,0,0,1,1,date("Y")+1)))
-            ->count();
-
-            $lifetime_serve_hours = \DB::table('volunteers')
-            ->where('vid',\Session::get('user_id'))
-            ->value('acc_serve_hour');
         
-            $annual_serve_hours = \DB::table('volunteer_events')
-            ->join('events','volunteer_events.eid','=','events.eid')
-            ->where('volunteer_events.vid',\Session::get('user_id'))
-            ->where('volunteer_events.status','present')
-            ->where('events.date','>',date('Y-m-d',mktime(0,0,0,1,1,date("Y"))))
-            ->where('events.date','<',date('Y-m-d',mktime(0,0,0,1,1,date("Y")+1)))
-            ->sum('volunteer_events.serve_hour');
-
-            $volunteer_rank = \DB::table('award_histories')
-            ->where('vid',\Session::get('user_id'))
-            ->value('description');
-        
+		
         return view('/homepage',[
-            'programmes' => $programmes,
-            'events' => $events,
-            'number_of_events' => $number_of_events,
-            'number_of_completed_events' => $number_of_completed_events,
-            'number_of_ongoing_events' => $number_of_ongoing_events,
-            'total_volunteers' => $total_volunteers,
-            'active_volunteers' => $active_volunteer,
-            'lifetime_ranking' => $lifetime_ranking,
-            'annual_ranking' => $number_of_events_of_the_volunteer,
-            'number_of_reserved_events' => $number_of_reserved_events,
-            'number_of_attended_events' => $number_of_attended_events,
-            'annual_completed_events' => $number_of_completed_events_annual,
-            'lifetime_serve_hours' => $lifetime_serve_hours,
-            'annual_serve_hours' => $annual_serve_hours,
-            'volunteer_rank' => $volunteer_rank,
-            'authority'=> $authority,
-            'name_occupation' => $name_occupation
+			"new_volunteer_this_month"	=>	$new_volunteer_this_month,
+			"volunteer_count"			=>	$volunteer_count,
+			"active_volunteer_count"	=>	$volunteer_count - $inactive_volunteer_count,
+			"volunteer_acc_serve_hour"	=>	$volunteer_acc_serve_hour,
+			"volunteer_ann_serve_hour"	=>	$volunteer_ann_serve_hour,
+			"next_events"				=>	$next_events
         ]);
 	}
 	

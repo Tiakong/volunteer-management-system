@@ -26,8 +26,10 @@ class VolunteerController extends Controller
 	public function register()
 	{
 		$Programme = Programme::orderBy('name','asc')->get();
+		$Volunteer = new Volunteer();
 		return view('register',[
 			'programmes' => $Programme,
+			'volunteer' => $Volunteer,
 		]);
 	}
 
@@ -42,7 +44,7 @@ class VolunteerController extends Controller
 					'race' 			=> 'required',
 					'email' 		=> 'required|email|max:255|unique:volunteer_accounts,username',
 					'contact_no' 	=> 'required|regex:/(01)[0-9]/|min:10',
-					'address1' 		=> 'required',
+					'address' 		=> 'required',
 					'em_person' 	=> 'required|max:100',
 					'em_contact_no' => 'required|regex:/(01)[0-9]/|min:10',
 					'em_relation' 	=> 'required',
@@ -53,6 +55,7 @@ class VolunteerController extends Controller
 					'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:1999',
 					'password' => 'required|min:6|confirmed',
 		]);
+
 		if($request->hasFile('profile_image')){
 			$filenameWithExt=$request->file('profile_image')->getClientOriginalName();
 			$filename=pathinfo($filenameWithExt,PATHINFO_FILENAME);
@@ -75,7 +78,7 @@ class VolunteerController extends Controller
 			'gender'			=> $request->get('gender'),
 			'race' 				=> $request->get('race'),
 			'nationality' 		=> $request->get('nationality'),
-			'address' 			=> $request->get('address1'),
+			'address' 			=> $request->get('address'),
 			'education_level'	=> $request->get('education_level'),
 			'occupation' 		=> $request->get('occupation'),
 			't_shirt_size'		=> $request->get('t_shirt_size'),
@@ -261,6 +264,7 @@ class VolunteerController extends Controller
 	 public function show()
     {
 		$id = Session::get('user_id');
+		
 		$Volunteer = Volunteer::find($id);
 		if(!$Volunteer) throw new ModelNotFoundException;
 
@@ -359,7 +363,7 @@ class VolunteerController extends Controller
 			'race' 			=> 'required',
 			'email' 		=> 'required|email|max:255',
 			'contact_no' 	=> 'required|regex:/(01)[0-9]/|min:10',
-			'address1' 		=> 'required',
+			'address' 		=> 'required',
 			'em_person' 	=> 'required|max:100',
 			'em_contact_no' => 'required|regex:/(01)[0-9]/|min:10',
 			'em_relation' 	=> 'required',
@@ -389,7 +393,7 @@ class VolunteerController extends Controller
 		$update_volunteer->gender = $request->get('gender');
 		$update_volunteer->race = $request->get('race');
 		$update_volunteer->nationality = $request->get('nationality');
-		$update_volunteer->address = $request->get('address1');
+		$update_volunteer->address = $request->get('address');
 		$update_volunteer->education_level = $request->get('education_level');
 		$update_volunteer->occupation = $request->get('occupation');
 		$update_volunteer->remark = $request->get('remark');

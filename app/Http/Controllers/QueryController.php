@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Common;
 
-use Maatwebsite\Excel\Facades\Excel;
-
 use App\AdminAccount;
 use App\VolunteerAccount;
 use App\Volunteer;
@@ -125,6 +123,23 @@ class QueryController extends Controller
 		return $volunteers;
 	}
 	
+	public function VE_getVolunteersId(Request $request)
+	{
+		$eid = $request->get('eid');
+		return VolunteerEvent::where('eid', $eid)->pluck('vid');
+	}
+	
+	public function VE_getVolunteers(Request $request)
+	{
+		$eid = $request->get('eid');
+		$volunteers = DB::table('volunteer_events as ve')
+		->join('volunteers as v', 've.vid', '=', 'v.vid')
+		->where('ve.eid', $eid)
+		->select('ve.*', 'v.*', 've.remark as event_remark')
+		->get();
+		return $volunteers;
+	}
+	
 	public function exportData(Request $request)
 	{
 		$case			= $request->get('case');
@@ -200,11 +215,11 @@ class QueryController extends Controller
 				$html = '
 				<col width="5%">
 				<col width="10%">
-				<col width="30%">
 				<col width="15%">
+				<col width="10%">
 				<col width="5%">
 				<col width="5%">
-				<col width="5%">
+				<col width="25%">
 				<col width="25%">
 				<tr>
 					<th colspan='.$labelSpanSize.'>Programme</th>
@@ -252,7 +267,7 @@ class QueryController extends Controller
 						<td class='text-center'>".($v->gender)."</td>
 						<td class='text-center'>".($v->t_shirt_size)."</td>
 						<td>".($v->remark)."</td>
-						<td class='text-center'>".($v->status)."</td>
+						<td>".($v->status)."</td>
 					</tr>
 					";
 				}
@@ -316,12 +331,12 @@ class QueryController extends Controller
 				$bodySpan = 4;
 				
 				$html = "
-				<col width='15%'>
-				<col width='25%'>
+				<col width='14%'>
+				<col width='21%'>
 				<col width='15%'>
 				<col width='10%'>
 				<col width='5%'>
-				<col width='30%'>
+				<col width='40%'>
 				<tr>
 					<th colspan=".$headerSpan.">Volunteer ID</th>
 					<td colspan=".$bodySpan.">".$v->id."</td>
@@ -494,7 +509,7 @@ class QueryController extends Controller
 			| ccv00002 | Ammy Lau Chen Wen | 012-1234567    | 2019-07-10 | 102                  |
 			*/
 				case 6:
-				$volunteer = Volunteer::where('last_active_date', '<', Carbon::now()->subDays(0))
+				$volunteer = Volunteer::where('last_active_date', '<', Carbon::now()->subDays(Common::$DAY_TO_CONSIDER_INACTIVE))
 				->orderBy('last_active_date', 'asc')
 				->get();
 				
@@ -566,6 +581,7 @@ class QueryController extends Controller
 				->select('v.*', DB::raw('sum(ve.serve_hour+vo.serve_hour) as total_serve_hour'))
 				->join('volunteer_events as ve', 'v.vid', '=', 've.vid')
 				->join('volunteer_officeworks as vo', 'v.vid', '=', 'vo.vid')
+				->where('ve.status','present')
 				->groupBy('v.vid')
 				->orderBy('total_serve_hour', 'desc');
 				

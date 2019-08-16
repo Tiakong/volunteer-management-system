@@ -96,6 +96,7 @@ class OfficeworkController extends Controller
 		->join('volunteers as v', 'v.vid', '=', 'vo.vid')
 		->whereIn('vo.vid', $volunteersId)
 		->select('v.vid','v.id','v.name','vo.remark','vo.serve_hour')
+		->orderby('v.name')
 		->get();
 		return view('officework.show', ['officework' => $officework, 'volunteers' => $volunteers]);
     }
@@ -170,8 +171,8 @@ class OfficeworkController extends Controller
 		
 		$vids = VolunteerOfficework::where('oid', $id)->pluck('vid');
 		
-		Volunteer::whereIn('vid', $vids)
-		->decrement('acc_serve_hour', $officework->serve_hour);
+		//Volunteer::whereIn('vid', $vids)
+		//->decrement('acc_serve_hour', $officework->serve_hour);
 		
 		$vos = VolunteerOfficework::where('oid', $id)->delete();
 		$officework->delete();
