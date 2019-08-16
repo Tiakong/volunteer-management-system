@@ -32,7 +32,8 @@ use App\Common;
           {!! Form::model($programme, [
             'route' => ['programme.store'],
             'class' => 'form horizontal',
-            'enctype' => 'multipart/form-data'
+            'enctype' => 'multipart/form-data',
+            'onsubmit' => ' return confirmation()',
             ]) 
           !!}
 
@@ -124,6 +125,7 @@ use App\Common;
                 'id' => 'programme-contact',
                 'class' =>'form-control',
                 'readonly'=>'true',
+                'required'=>'true',
               ])!!}
               </div>
             </div>
@@ -158,14 +160,28 @@ use App\Common;
             </div>
 
             <div class="form-group row">
-              {!! Form::label('programme-partner','Upload Image',[
+              {!! Form::label('programme-venue','Programme Created By*',[
               'class' => 'control-label col-sm-3',
               ]) !!}
               <div class="col-sm-4">
-              <input type="file" name="cover_image[]" multiple class="form-control" accept="image/x-png,image/gif,image/jpeg">
+                {!! Form::text('created_by',null,[
+                'id' => 'programme-created-by',
+                'class' =>'form-control',
+                'required'=>'true',
+
+              ])!!}
               </div>
             </div>
 
+            <div class="form-group row">
+              {!! Form::label('programme-partner','Programme Supporting Partner Images',[
+              'class' => 'control-label col-sm-3',
+              ]) !!}
+              <div class="col-sm-4">
+              <input type="file" name="supporting_partner_image[]" multiple class="form-control" accept="image/x-png,image/gif,image/jpeg" onclick="announce()">
+              </div>
+            </div>
+            
 
             <div class="form-group row">
               <div class="col-sm-offset-3 col-sm-6">
@@ -199,7 +215,7 @@ use App\Common;
             {
                   var ul = document.getElementById("alert-box");
                   var li = document.createElement("li");
-                  var text = document.createTextNode("End Year Should Be More Than Start Year");
+                  var text = document.createTextNode("Programme End Year Should Be Equal to or Larger than Start Year");
                   li.appendChild(text);
                   ul.appendChild(li);
                   validate = false;
@@ -209,11 +225,11 @@ use App\Common;
             {
               if(start_month && end_month != "")
               {
-                if(end_month < start_month)
+                if(end_month < start_month || end_month == start_month)
                 {
                   var ul = document.getElementById("alert-box");
                   var li = document.createElement("li");
-                  var text = document.createTextNode("End Month Should Be More Than Start Month");
+                  var text = document.createTextNode("Programme End Month Should Be Larger Than Start Month");
                   li.appendChild(text);
                   ul.appendChild(li);
                   validate = false;
@@ -228,6 +244,23 @@ use App\Common;
           }
           return validate;
         }
+
+        function confirmation()
+    {
+
+        if (!confirm("Make sure that programme details are correct, once you proceed after this stage you would not be able to go back." + "\n" + "\n" + "Are you sure you want to Proceed?" + "\n" ))
+        {
+          return false;
+        }
+        else
+        {
+          return true;
+        }
+    }
+      function announce()
+      {
+        alert("You can select multiple image files to upload at once.");
+      }
 
        
 
