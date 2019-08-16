@@ -34,6 +34,7 @@ use App\Common;
             'method' =>'put',
             'class' => 'form horizontal',
             'enctype' => 'multipart/form-data',
+            'onsubmit' => ' return confirmation()',
             ]) 
           !!}
 
@@ -132,6 +133,7 @@ use App\Common;
                 {!! Form::text('contact',$programme->contact,[
                 'id' => 'programme-contact',
                 'class' =>'form-control',
+                'required'=>'true',
                 'required'=>'true',])
                 !!}
               </div>
@@ -166,6 +168,20 @@ use App\Common;
 
             </div>
 
+            <div class="form-group row">
+              {!! Form::label('programme-venue','Programme Created By*',[
+              'class' => 'control-label col-sm-3',
+              ]) !!}
+              <div class="col-sm-4">
+                {!! Form::text('created_by',$programme->created_by,[
+                'id' => 'programme-created-by',
+                'class' =>'form-control',
+                'required'=>'true',
+
+              ])!!}
+              </div>
+            </div>
+
             <div class="form-group row" >
             {!! Form::label('partner','Supporting Partner',[
               'class' => 'control-label col-sm-3',
@@ -198,10 +214,10 @@ use App\Common;
             </div>
 
               <div class="form-group row">
-              {!! Form::label('programme-partner','New Image',[
+              {!! Form::label('programme-partner',' New Programme Supporting Partner Images',[
               'class' => 'control-label col-sm-3',
               ]) !!}
-              <input type="file" name="cover_image[]" multiple accept="image/x-png,image/gif,image/jpeg">
+              <input type="file" name="supporting_partner_image[]" multiple accept="image/x-png,image/gif,image/jpeg" onclick="announce()">
               </div>
 
             <div class="form-group_row">
@@ -209,7 +225,7 @@ use App\Common;
               {!! Form::button('Update',[
               'type' => 'submit',
               'class' => 'btn btn-primary',
-              'onclick' => 'return validate()'
+              'onclick' => 'return validate()',
               ]) !!}
 
             </div>
@@ -241,7 +257,7 @@ use App\Common;
             {
                   var ul = document.getElementById("alert-box");
                   var li = document.createElement("li");
-                  var text = document.createTextNode("End Year Should Be More Than Start Year");
+                  var text = document.createTextNode("Programme End Year Should Be Equal to or Larger Than Start Year");
                   li.appendChild(text);
                   ul.appendChild(li);
                   validate = false;
@@ -251,11 +267,11 @@ use App\Common;
             {
               if(start_month && end_month != "")
               {
-                if(end_month < start_month)
+                if(end_month < start_month || end_month == start_month)
                 {
                   var ul = document.getElementById("alert-box");
                   var li = document.createElement("li");
-                  var text = document.createTextNode("End Month Should Be More Than Start Month");
+                  var text = document.createTextNode("Programme End Month Should Be Larger Than Start Month");
                   li.appendChild(text);
                   ul.appendChild(li);
                   validate = false;
@@ -271,6 +287,22 @@ use App\Common;
           return validate;
         }
 
+        function confirmation()
+    {
+
+        if (!confirm("Make sure that programme details are correct, once you proceed after this stage you would not be able to go back." + "\n" + "\n" + "Are you sure you want to Proceed?" + "\n" ))
+        {
+          return false;
+        }
+        else
+        {
+          return true;
+        }
+    }
+    function announce()
+      {
+        alert("You can select multiple image files to upload at once.");
+      }
        
 
         </script>

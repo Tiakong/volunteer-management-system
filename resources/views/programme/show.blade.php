@@ -70,6 +70,16 @@ use App\Common;
                         </td>
                     </tr>
                     <tr>
+
+                    <tr>
+                        <td><b>Created By: </b></td>
+                        <td>
+                          <div>
+                            {{ $programme->created_by}}
+                          </div>
+                        </td>
+                    </tr>
+                    <tr>
                       
                     </tr>
                     <td><b>Supporting Partners:</b></td>
@@ -89,11 +99,28 @@ use App\Common;
 						  <a href='{{route("programme.edit", $programme->pid)}}'>Edit</a>
 						 </button>
 						  <button class='btn  btn-danger'>
-              <a href='{{route("programme.delete", $programme->pid)}}'>Delete</a>
+              <a href='{{route("programme.delete", $programme->pid)}}' onclick="return confirmation()">Delete</a>
 							</button>
                           </td>
                     </tr>
                 </table>
 
 </div>
+
+<script>
+
+function confirmation()
+    {
+
+        if (!confirm("Are you sure want to delete this programme? You are not be able to recover this programme details after deleted it." + "\n" + "\n" + "Are you sure you want to Proceed?" + "\n" ))
+        {
+          return false;
+        }
+        else
+        {
+          return true;
+        }
+    }
+
+</script>
 @endsection

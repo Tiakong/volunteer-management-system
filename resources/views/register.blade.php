@@ -38,7 +38,17 @@ fieldset
     <li><a data-toggle="tab" id="ongoing_event" href="" onclick="page3Toggle()">Skill and Proficiency</a></li>
   </ul>
 
-  <form id="registration-form" name='registration' method="post" action="{{route('volunteer.store')}}" enctype="multipart/form-data">
+  <!-- <form id="registration-form" name='registration' method="post" action="{{route('volunteer.store')}}" enctype="multipart/form-data"> -->
+
+  {!! Form::model($volunteer,[
+            'route' => ['volunteer.store'],
+			'id' => 'registration-form',
+            'class' => 'form horizontal',
+			'method' => 'post',
+            'enctype' => 'multipart/form-data',
+            ]) 
+          !!}
+
 	{{csrf_field()}}
 	<div class="tab-content" id="tab-content-display">
 		<div class="login-wrap">
@@ -54,12 +64,16 @@ fieldset
 										<div class="panel panel-default">
 											<div class="panel-body">
 													<div class="form-group row">
-														{!! Form::label('volunteer-username', 'Username', [
+														{!! Form::label('username', 'Username', [
 															'class' => 'control-label col-sm-4',
 														]) !!}
 
 														<div class="col-sm-5">
-															<input type="text" name="username" class="form-control mb-4" />
+														 {!! Form::text('username',null,[
+              											  'id' => 'username',
+              											  'class' =>'form-control',
+              											  'required'=> 'true',
+        											      ])!!}
 														</div>
 													</div>
 												<div class="form-group row">
@@ -67,7 +81,11 @@ fieldset
 														'class' => 'control-label col-sm-4',
 													]) !!}
 													<div class="col-sm-5">
-														<input type="password" name="password" class="form-control mb-4" />
+														 {!! Form::password('password',null,[
+              											  'id' => 'password',
+              											  'class' =>'form-control',
+              											  
+        											      ])!!}
 													</div>
 												</div>
 												<div class="form-group row">
@@ -75,7 +93,11 @@ fieldset
 														'class' => 'control-label col-sm-4',
 													]) !!}
 													<div class="col-sm-5">
-														<input type="password" name="password_confirmation" class="form-control mb-4" />
+													{!! Form::password('password_confirmation',null,[
+              											  'id' => 'password_confirmation',
+              											  'class' =>'form-control',
+              											  
+        											      ])!!}
 													</div>
 												</div>
 											</div>
@@ -92,7 +114,11 @@ fieldset
 														'class' => 'control-label col-sm-4',
 													]) !!}
 														<div class="col-sm-6">
-															<input type="text" name="name" class="form-control mb-4" />
+														{!! Form::text('name',null,[
+              											  'id' => 'name',
+              											  'class' =>'form-control',
+              											  
+        											      ])!!}
 														</div>
 													</div>
 
@@ -101,7 +127,11 @@ fieldset
 															'class' => 'control-label col-sm-4',
 														]) !!}
 														<div class="col-sm-6">
-															<input type="text" name="nric" class="form-control mb-4" />
+														{!! Form::text('nric',null,[
+              											  'id' => 'nric',
+              											  'class' =>'form-control',
+              											  
+        											      ])!!}
 														</div>
 													</div>
 
@@ -124,7 +154,11 @@ fieldset
 															'class' => 'control-label col-sm-4',
 														]) !!}
 														<div class="col-sm-4">
-															<input type="text" name="nationality" class="form-control mb-4" />
+														{!! Form::text('nationality',null,[
+              											  'id' => 'nationality',
+              											  'class' =>'form-control',
+              											  
+        											      ])!!}
 														</div>
 													</div>
 													<div class="form-group row">
@@ -132,7 +166,11 @@ fieldset
 															'class' => 'control-label col-sm-4',
 														]) !!}
 														<div class="col-sm-3">
-															<input type="text" name="race" class="form-control mb-4" />
+														{!! Form::text('race',null,[
+              											  'id' => 'race',
+              											  'class' =>'form-control',
+              											  
+        											      ])!!}
 														</div>
 													</div>
 												</div>
@@ -147,11 +185,15 @@ fieldset
 													
 
 													<div class="form-group row">
-														{!! Form::label('volunteer-contact_no', 'Contact Number', [
+														{!! Form::label('contact_no', 'Contact Number', [
 																'class' => 'control-label col-sm-4',
 															]) !!}
 															<div class="col-sm-5">
-																<input type="text" name="contact_no" class="form-control mb-4" />
+															{!! Form::text('contact_no',null,[
+              											 	 'id' => 'contact_no',
+              											 	 'class' =>'form-control',
+              											 	 
+        											     	 ])!!}
 															</div>
 													</div>
 
@@ -161,7 +203,11 @@ fieldset
 														]) !!}
 
 														<div class="col-sm-5">
-															<input type="text" name="email" class="form-control mb-4" />
+														{!! Form::email('email',null,[
+              											 	 'id' => 'email',
+              											 	 'class' =>'form-control',
+              											 	 
+        											     	 ])!!}
 														</div>
 													</div>
 
@@ -170,7 +216,11 @@ fieldset
 															'class' => 'control-label col-sm-4',
 														]) !!}
 														<div class="col-sm-7">
-															<input type="text" name="address1" class="form-control mb-4" />
+														{!! Form::text('address',null,[
+              											 	 'id' => 'address',
+              											 	 'class' =>'form-control',
+              											 	 
+        											     	 ])!!}
 														</div>
 													</div>
 
@@ -188,7 +238,11 @@ fieldset
 															'class' => 'control-label col-sm-4',
 														]) !!}
 														<div class="col-sm-7">
-															<input type="text" name="em_person" class="form-control mb-4" />
+														{!! Form::text('em_person',null,[
+              											 	 'id' => 'em_person',
+              											 	 'class' =>'form-control',
+              											 	 
+        											     	 ])!!}
 														</div>
 													</div>
 													<div class="form-group row">
@@ -196,7 +250,11 @@ fieldset
 															'class' => 'control-label col-sm-4',
 														]) !!}
 														<div class="col-sm-4">
-															<input type="text" name="em_relation" class="form-control mb-4" />
+														{!! Form::text('em_relation',null,[
+              											 	 'id' => 'em_relation',
+              											 	 'class' =>'form-control',
+              											 	 
+        											     	 ])!!}
 														</div>
 													</div>
 													<div class="form-group row">
@@ -204,7 +262,11 @@ fieldset
 															'class' => 'control-label col-sm-4',
 														]) !!}
 														<div class="col-sm-5">
-															<input type="text" name="em_contact_no" class="form-control mb-4" />
+														{!! Form::tel('em_contact_no',null,[
+              											 	 'id' => 'em_contact_no',
+              											 	 'class' =>'form-control',
+              											 	 
+        											     	 ])!!}
 														</div>
 													</div>
 												</div>
