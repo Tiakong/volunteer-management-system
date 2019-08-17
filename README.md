@@ -1,3 +1,3 @@
 # volunteer-management-system
 
-Download the vms.rar file and extract into project
+Download the VMS latest.rar file and extract into project
