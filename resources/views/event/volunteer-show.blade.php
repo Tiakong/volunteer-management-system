@@ -5,86 +5,78 @@
 ?>
 <div class="event-form-container">
 
-<div class="button-div">
+	<div class="button-div">
 
-  <div class="program-button-div">
-      <div class="dropdown">
-          <button class="program-button btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Programme
-          </button>
-          <?php 
-          $program_title = Common::GetProgrammes();
-          ?>
-          <ul class="dropdown-menu">
-          @foreach($program_title as $code => $name)
-          
-          <li>{!! link_to_route('event.volunteer-show',
-                      $title = $code,
-                      $parameters = [
-                          'code' => $code])!!}</li>
-          
-          @endforeach
-          </ul>
-      </div>
-  </div>
+	  <div class="program-button-div">
+		  <div class="dropdown">
+			  <button class="program-button btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Programme
+			  </button>
+			  <ul class="dropdown-menu">
+				<li>
+					<a href="{{route('event.index')}}">All</a>
+				</li>
+			  @foreach(Common::GetProgrammes() as $code => $name)
+			  
+			  <li>
+				  <a href="{{route('event.show', $code)}}">{{ $code }}</a>
+			  </li>
+			  
+			  @endforeach
+			  </ul>
+		  </div>
+	  </div>
 
-  <div class="event-button-div">
-    @if($flag != 0)
-      <h2>{{$pname}}</h2>
-    @endif
-  </div>
-</div>     
+	  @if($flag != 0)
+	  <div class="event-button-div">
+		  <h2>{{$pname}}</h2>
+	  </div>
+	  @endif
+	</div>
 
-<ul class="nav nav-tabs">
-<li><a data-toggle="tab" id="reserved_event" href="">Reserved Event</a></li>
-<li><a data-toggle="tab" id="available_event" href="">Available Event</a></li>
-</ul>
+	<ul class="nav nav-tabs">
+		<li class='active'><a data-toggle="tab" id="reserved_event" href="">Reserved Event</a></li>
+		<li><a data-toggle="tab" id="available_event" href="">Available Event</a></li>
+		<li><a data-toggle="tab" id="past_events" href="">All Events You've Registered</a></li>
+	</ul>
 
-<div class="tab-content">
-<div id="page_details">
-</div>
-</div>
+	<div class="tab-content">
+		<div id="page_details"></div>
+	</div>
 </div>
 
 <script>
+	function load_page_details(choice)
+	{
+		SendRequest(
+			"<?php echo route('event.select-tab') ?>",
+			{
+				'query':choice,
+				'code':"<?php echo $programme ?>"
+			},
+			true,
+			function(table)
+			{
+				console.log(table);
+			   $('#page_details').html(table);  
+			}
+		);
+	}
+
 $(document).ready(function(){
 
-load_page_details('');
+	load_page_details('reserved_event');
 
-function load_page_details(page_id)
-{
-$.ajax({
-url:"{{ route('event.volunteer-select-tab',['code'=>$programme]) }}",
-method:'GET',
-data:{query:page_id},
-dataType:'json',
-success:function(data)
-{
-$('#page_details').html(data.table_data);  
-var i;
-var redirect_route = "{{ route('event.volunteer-show-detail') }}";
-var myform = document.getElementsByClassName("myForm");
-for(i=0;i<myform.length;i++){
-myform[i].action = redirect_route;
-}
-$('.myForm').prepend('<input name="_token" type="hidden" id="_token" value="{{ csrf_token() }}" />');  
-}
-})
-
-}
-
-$('.nav li a').click(function(){
-var page_id = $(this).attr("id");
-
-load_page_details(page_id);
-});
-
+	$('.nav li a').click(function(){
+		var choice = $(this).attr("id");
+		load_page_details(choice);
+	});
 
 });
 </script>
 
 <script>
-var msg = '{{Session::get('alert')}}';
-var exist = '{{Session::has('alert')}}';
+var msg = '{{Session::get("alert")}}';
+var exist = '{{Session::has("alert")}}';
 if(exist){
 alert(msg);
 }

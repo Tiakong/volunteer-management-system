@@ -41,6 +41,4 @@
                 </div>
             </div>
     </div>
-    <button class="event-detail-button btn btn-primary">{!! link_to_route('event.index',
-                                $title = 'Back')!!}</button>
 @endsection
