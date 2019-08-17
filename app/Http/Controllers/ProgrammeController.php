@@ -157,6 +157,7 @@ class ProgrammeController extends Controller
 		$this->validate($request,array(
 			'name' => "required|unique:programmes,name,$id,pid",
 			'code' => "required|unique:programmes,code,$id,pid",
+			'contact' => "min:10",
 			'supporting_partner_image.*' => 'nullable|image|mimes:jpeg,jpg,png,gif',
 		));
 
