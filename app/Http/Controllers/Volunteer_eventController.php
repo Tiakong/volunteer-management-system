@@ -80,12 +80,18 @@ class Volunteer_eventController extends Controller
 		->whereIn('vid', $vids)
 		->get();
 		
+		
 		foreach($vs as $v)
 		{
 			$val = $volunteer_list[$v->vid];
 			$v->serve_hour = $val->serve_hour;
 			$v->remark = $val->event_remark;
-			$v->status = $val->status;
+			if($val->status == ""){
+				$v->status = "pending";
+			}
+			else{
+				$v->status = $val->status;
+			}
 			$v->save();
 		}
 		
