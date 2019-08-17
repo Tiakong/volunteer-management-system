@@ -69,7 +69,7 @@ use App\Common;
 				@foreach(Common::$Skillsets as $skill_key => $skill_value)
 				<tr name='{{$skill_key}}' class='checkbox-block checkbox-main'>
 					<td class='text-center'>
-						<input readonly type='checkbox' name="criteria"/>
+						<input readonly type='checkbox' name="criteria"/> 
 					</td>
 					<th colspan='2'>{{$skill_key}}</th>
 				</tr>
@@ -164,6 +164,7 @@ $(document).ready(function(){
 		skillsets.forEach(function(e){
 			data[e] = $('#'+e).get(0).checked?1:0;
 		});
+		
 		data['name'] = $("#volunteer_name").get(0).value;
 		data['code'] = $("#programme_code").get(0).value;
 		
@@ -255,13 +256,17 @@ function openTab(evt, tabName) {
 
 }
 
+var volunteer_name_vid = "";
+
 function DisplaySearchResult(results)
 {
 		$('#search_vp').empty();
 		$('#notification').empty();
 		$('#alert_field').empty();
 		var result_found = false ;
+		volunteer_name_vid = "";
 
+		//Search By Name
 		if(results['v'].length>0)
 		{
 			var header = ["ID","Name","Email","Contact","Race","Status"];
@@ -338,7 +343,7 @@ function DisplaySearchResult(results)
 				tr.appendChild(td);
 			}
 			//Append Volunteer VID into Array
-			var volunteer_array = [volunteer[0].vid];
+			volunteer_name_vid = volunteer[0].vid;
 
 			//Create A Label
 			var label = document.createElement("label");
@@ -351,25 +356,38 @@ function DisplaySearchResult(results)
 			textarea.id = "notification_message";
 			document.getElementById("notification").appendChild(textarea);
 
+			//Create A Label
+			var label = document.createElement("label");
+			label.innerHTML = "Created By";
+			document.getElementById("notification").appendChild(label);
+
+			//Create A TextField
+			var text = document.createElement("input");
+			text.setAttribute('type','text');
+			text.className='form-control'
+			text.id = "created_by";
+			document.getElementById("notification").appendChild(text);
+
 			//Create Send Notification Button
 			var x = document.createElement("input");
 			x.setAttribute("type", "button");
 			x.setAttribute("value", "Send Notification");
 			x.className = "btn btn-primary btn-position";
 			x.onclick  = function() {
-    			Send(volunteer_array);
+    			Send("Name");
 				}
 			document.getElementById("notification").appendChild(x);
 			result_found = true ;
 		}
 		
+		//Search By Programme
 		else if(results['vp']['interested'] !== undefined)
 		{		
 			if (results['vp']['interested'].length != 0)
 			{
 			var volunteer_array = [];
 			var count = 0;
-			var header = ["ID","Name","Email","Contact","Race","Status"];
+			var header = ["ID","Name","Email","Contact","Race","Status",""];
 			var table = document.getElementById("search_vp");
 			var tbody = document.createElement("tbody");
 			table.appendChild(tbody);
@@ -385,7 +403,7 @@ function DisplaySearchResult(results)
 				for (var key in results['vp']['interested'] )
 				{
 					var tr = document.createElement("tr");
-					for (var i =0;i<6;i++)
+					for (var i =0;i<7;i++)
 					{
 						tbody.appendChild(tr);
 						var td = document.createElement("td");
@@ -437,12 +455,30 @@ function DisplaySearchResult(results)
 							}
 							td.appendChild(document.createTextNode(status));
 						}
+						else if (i==6)
+						{
+							var checkbox = document.createElement("input");
+							checkbox.setAttribute("type", "checkbox");
+							checkbox.value = results['vp']['interested'][key].vid;
+							checkbox.name = "VolunteerID";
+							td.appendChild(checkbox);
+						}
 						tr.appendChild(td);
 						}
-						//Append Volunteer VID Into Array
-						volunteer_array[count] = results['vp']['interested'][key].vid;
-						count  +=1;
 					}
+					//Select All Button
+					var select_all = document.createElement("input");
+					select_all.setAttribute("type", "button");
+					select_all.setAttribute("value", "Select All");
+					select_all.style.marginRight = "100%" ;
+					select_all.style.marginBottom = "30px";
+					select_all.style.float = "right";
+					select_all.className = "btn btn-primary ";
+						select_all.onclick  = function() {
+						selectAll();
+						}
+					document.getElementById("notification").appendChild(select_all);
+
 					//Create A Label
 					var label = document.createElement("label");
 					label.innerHTML = "Enter Message";
@@ -454,6 +490,19 @@ function DisplaySearchResult(results)
 					textarea.id = "notification_message";
 					document.getElementById("notification").appendChild(textarea);
 
+					//Create A Label
+					var label = document.createElement("label");
+					label.innerHTML = "Created By";
+					document.getElementById("notification").appendChild(label);
+
+					//Create A TextField
+					var text = document.createElement("input");
+					text.setAttribute('type','text');
+					text.className='form-control'
+					text.id = "created_by";
+					document.getElementById("notification").appendChild(text);
+
+					
 
 					//Create Send Notification Button
 					var x = document.createElement("input");
@@ -461,21 +510,21 @@ function DisplaySearchResult(results)
 					x.setAttribute("value", "Send Notification");
 					x.className = "btn btn-primary btn-position";
 						x.onclick  = function() {
-						Send(volunteer_array);
+						Send("Programme");
 						}
 					document.getElementById("notification").appendChild(x);
 					result_found = true ;
 				}
 
 		}
-
+		
 		else if( $("input:checked").length != 0)
 		{		
 			if (results['vc'].length != 0)
 			{
 			var volunteer_array = [];
 			var count = 0;
-			var header = ["ID","Name","Email","Contact","Race","Status"];
+			var header = ["ID","Name","Email","Contact","Race","Status",""];
 			var table = document.getElementById("search_vp");
 			var tbody = document.createElement("tbody");
 			table.appendChild(tbody);
@@ -491,7 +540,7 @@ function DisplaySearchResult(results)
 				for (var key in results['vc'] )
 				{
 					var tr = document.createElement("tr");
-					for (var i =0;i<6;i++)
+					for (var i =0;i<7;i++)
 					{
 						
 						tbody.appendChild(tr);
@@ -545,12 +594,31 @@ function DisplaySearchResult(results)
 							}
 							td.appendChild(document.createTextNode(status));
 						}
+						else if (i==6)
+						{
+							var checkbox = document.createElement("input");
+							checkbox.setAttribute("type", "checkbox");
+							checkbox.value = results['vc'][key].vid;
+							checkbox.name = "VolunteerID";
+							td.appendChild(checkbox);
+						}
 						tr.appendChild(td);
 						}
-						//Append Volunteer VID into Array
-						volunteer_array[count] = results['vc'][key].vid;
-						count  +=1;
-				}					
+				}				
+				
+				//Select All Button
+				var select_all = document.createElement("input");
+					select_all.setAttribute("type", "button");
+					select_all.setAttribute("value", "Select All");
+					select_all.style.marginRight = "100%" ;
+					select_all.style.marginBottom = "30px";
+					select_all.style.float = "right";
+					select_all.className = "btn btn-primary ";
+						select_all.onclick  = function() {
+						selectAll();
+						}
+					document.getElementById("notification").appendChild(select_all);
+
 				//Create A Label
 					var label = document.createElement("label");
 					label.innerHTML = "Enter Message";
@@ -562,13 +630,25 @@ function DisplaySearchResult(results)
 					textarea.id = "notification_message";
 					document.getElementById("notification").appendChild(textarea);
 
+					//Create A Label
+					var label = document.createElement("label");
+					label.innerHTML = "Created By";
+					document.getElementById("notification").appendChild(label);
+
+					//Create A TextField
+					var text = document.createElement("input");
+					text.setAttribute('type','text');
+					text.className='form-control'
+					text.id = "created_by";
+					document.getElementById("notification").appendChild(text);
+
 					//Create Send Notification Button
 					var x = document.createElement("input");
 					x.setAttribute("type", "button");
 					x.setAttribute("value", "Send Notification");
 					x.className = "btn btn-primary btn-position";
 					x.onclick  = function() {
-						Send(volunteer_array);
+						Send("Criteria");
 						}
 					document.getElementById("notification").appendChild(x);
 					result_found = true ;
@@ -584,25 +664,92 @@ function DisplaySearchResult(results)
 		document.getElementById("search_result").style.display= "block";
 }
 
-
-function Send(vid)
+var check_count=0;
+function selectAll()
 {
-	var message = document.getElementById("notification_message").value;
-	if (message != "")
+	var input = document.getElementsByName("VolunteerID");
+	if (check_count == 0)
 	{
-		SendNotification(
-		"<?php echo route('notification.send'); ?>",
-		3,
-		'Volunteer Notification',
-		message,
-		vid,
-		1,
-		1
-	);
+		for (var i = 0;i<input.length;i++)
+		{
+		if (input[i].checked == false)
+		{
+			input[i].checked = true;
+			}
+		}
+		check_count =1 ;
 	}
 	else
 	{
-		alert("Please Enter Message");
+			for (var i = 0;i<input.length;i++)
+		{
+		if (input[i].checked == true)
+		{
+			input[i].checked = false;
+			}
+		}
+		check_count = 0;
+	}
+	}
+	
+
+
+
+function Send(vid)
+{
+	//Append Volunteer VID Into Array
+	var volunteer = [];
+	if (vid == "Name")
+	{
+		volunteer.push(volunteer_name_vid);
+	}
+	else
+	{
+	var volunteer_id = document.getElementsByName("VolunteerID");
+	for (var i = 0;i<volunteer_id.length;i++)
+	{
+		if (volunteer_id[i].checked == true)
+		{
+			volunteer.push(volunteer_id[i].value);
+		}
+	}
+	}
+
+	var created_by = document.getElementById("created_by").value;
+	var message = document.getElementById("notification_message").value;
+	if (message != "" && volunteer.length !== 0 && created_by !="")
+	{
+		
+        if (confirm("Make sure that messages entered and volunteers selected are correct, once you proceed after this stage you would not be able to go back and revert this process." + "\n" + "\n" + "Are you sure you want to Proceed?" + "\n" ))
+        {
+			SendNotification(
+		"<?php echo route('notification.send'); ?>", //URL
+		3, 											//Type
+		'Request For Volunteer',					//Title
+		message,									//description
+		1,											//Category
+		volunteer,									//Target
+		created_by,									//Created By
+		1,											//for_volunteer
+		1											//For_admin
+	);									
+	
+	alert("Message is Sent Successfully!");
+	// document.location.reload(true);
+		}
+    }
+		
+	else if (message=="")
+	{
+		alert("Please Enter Message In the Box Provided");
+	}
+	else if (volunteer.length=== 0)
+	{
+		alert("Please Select At Least One Volunteer");
+	}
+	else if (created_by == "")
+	{
+		alert("Please Fill In Created By Field");
 	}
 		
 
